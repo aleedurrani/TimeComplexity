@@ -7,7 +7,13 @@ import (
 	"os"
 	"strings"
 	"time"
+	"unicode"
 )
+
+//Unoptimized Code
+
+
+
 
 func countWords() int {
     file, err := os.Open("file.txt")
@@ -141,6 +147,56 @@ func isDigit(char string) bool {
 	return len(char) == 1 && strings.Contains(digits, char)
 }
 
+
+//Optimized Code (Reading the file once)
+
+func optimizedCountAll() (int, int, int, int, int, int) {
+	file, err := os.Open("file.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanRunes)
+
+	wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount := 0, 0, 0, 0, 0, 0
+	inWord := false
+
+	for scanner.Scan() {
+		char := scanner.Text()
+
+		if unicode.IsLetter([]rune(char)[0]) {
+			if !inWord {
+				wordCount++
+				inWord = true
+			}
+			if isVowel(char) {
+				vowelCount++
+			}
+		} else {
+			inWord = false
+			if isPunctuation(char) {
+				punctCount++
+			}
+			if isSentence(char) {
+				sentenceCount++
+			}
+			if isParagraph(char) {
+				paragraphCount++
+			}
+			if isDigit(char) {
+				digitCount++
+			}
+		}
+	}
+
+	return wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount
+}
+
+
+
+
 func main() {
 	start := time.Now()
 
@@ -161,4 +217,21 @@ func main() {
 	fmt.Printf("Total paragraph count: %d\n", paragraphCount)
 	fmt.Printf("Total digit count: %d\n", digitCount)
 	fmt.Printf("Total execution time: %v\n", duration)
+
+	fmt.Println("\nOptimized Code (Reading the file once)")
+	start = time.Now()
+
+	optimizedWordCount, optimizedPunctCount, optimizedVowelCount, optimizedSentenceCount, optimizedParagraphCount, optimizedDigitCount := optimizedCountAll()
+
+	optimizedDuration := time.Since(start)
+
+	fmt.Printf("Total word count: %d\n", optimizedWordCount)
+	fmt.Printf("Total punctuation count: %d\n", optimizedPunctCount)
+	fmt.Printf("Total vowel count: %d\n", optimizedVowelCount)
+	fmt.Printf("Total sentence count: %d\n", optimizedSentenceCount)
+	fmt.Printf("Total paragraph count: %d\n", optimizedParagraphCount)
+	fmt.Printf("Total digit count: %d\n", optimizedDigitCount)
+	fmt.Printf("Total execution time: %v\n", optimizedDuration)
+
+	fmt.Printf("\nPerformance improvement: %.2f%%\n", (1 - float64(optimizedDuration)/float64(duration)) * 100)
 }
