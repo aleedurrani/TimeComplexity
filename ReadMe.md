@@ -1,4 +1,6 @@
-# Unoptimized Code Analysis: Text File Processing in GoLang
+# Time Complexity Analysis: Text File Processing in GoLang
+
+## Unoptimized Code
 
 ## Overview
 This Go program processes a text file (`file.txt`) and performs various counting operations. It calculates the number of words, punctuation marks, vowels, sentences, paragraphs, and digits in the file. The program is structured with separate functions for each counting operation.
