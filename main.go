@@ -11,11 +11,10 @@ import (
 	"unicode"
 )
 
-//Unoptimized Code
+// Unoptimized Code Section
+// These functions read the file multiple times, once for each counting operation
 
-
-
-
+// countWords counts the total number of words in the file
 func countWords() int {
     file, err := os.Open("file.txt")
     if err != nil {
@@ -32,6 +31,7 @@ func countWords() int {
     return wordCount
 }
 
+// countPunctuation counts the total number of punctuation marks in the file
 func countPunctuation() int {
 	file, err := os.Open("file.txt")
     if err != nil {
@@ -50,12 +50,13 @@ func countPunctuation() int {
     return punctCount
 }
 
+// isPunctuation checks if a given character is a punctuation mark
 func isPunctuation(s string) bool {
     punctuations := ".,;:!?-()[]{}'\""
     return len(s) == 1 && strings.Contains(punctuations, s)
 }
 
-
+// countVowels counts the total number of vowels in the file
 func countVowels() int {
 	file, err := os.Open("file.txt")
     if err != nil {
@@ -74,11 +75,13 @@ func countVowels() int {
     return vowelCount
 }
 
+// isVowel checks if a given character is a vowel
 func isVowel(char string) bool {
 	vowels := "aeiouAEIOU"
 	return len(char) == 1 && strings.Contains(vowels, char)
 }
 
+// countSentences counts the total number of sentences in the file
 func countSentences() int {
 	file, err := os.Open("file.txt")
     if err != nil {
@@ -97,11 +100,13 @@ func countSentences() int {
     return sentenceCount
 }
 
+// isSentence checks if a given character is a sentence-ending punctuation
 func isSentence(char string) bool {
 	sentences := ".!?"
 	return len(char) == 1 && strings.Contains(sentences, char)
 }
 
+// countParagraphs counts the total number of paragraphs in the file
 func countParagraphs() int {
 	file, err := os.Open("file.txt")
     if err != nil {
@@ -129,8 +134,7 @@ func countParagraphs() int {
     return paragraphCount
 }
 
-
-
+// countDigits counts the total number of digits in the file
 func countDigits() int {
 	file, err := os.Open("file.txt")
     if err != nil {
@@ -149,12 +153,16 @@ func countDigits() int {
     return digitCount
 }
 
+// isDigit checks if a given character is a digit
 func isDigit(char string) bool {
 	digits := "0123456789"
 	return len(char) == 1 && strings.Contains(digits, char)
 }
 
-//Optimized Code (Reading the file once)
+// Optimized Code Section
+// This function reads the file only once and performs all counting operations simultaneously
+
+// optimizedCountAll counts words, punctuation, vowels, sentences, paragraphs, and digits in a single pass
 func optimizedCountAll() (int, int, int, int, int, int) {
 	file, err := os.Open("file.txt")
 	if err != nil {
@@ -172,6 +180,7 @@ func optimizedCountAll() (int, int, int, int, int, int) {
 	for scanner.Scan() {
 		char := scanner.Text()
 
+		// Check for word boundaries
 		if unicode.IsSpace([]rune(char)[0]) {
 			if inWord {
 				wordCount++
@@ -193,6 +202,7 @@ func optimizedCountAll() (int, int, int, int, int, int) {
 			consecutiveNewlines = 0
 		}
 
+		// Check for letters, digits, and punctuation
 		if unicode.IsLetter([]rune(char)[0]) {
 			if isVowel(char) {
 				vowelCount++
@@ -203,17 +213,18 @@ func optimizedCountAll() (int, int, int, int, int, int) {
 			punctCount++
 		}
 
+		// Check for sentence endings
 		if isSentence(char) {
 			sentenceCount++
 		}
-
-		
 	}
 
+	// Handle the last word if the file doesn't end with whitespace
 	if inWord {
 		wordCount++
 	}
 
+	// Handle the last paragraph if the file doesn't end with an empty line
 	if !emptyLine {
 		paragraphCount++
 	}
@@ -221,7 +232,10 @@ func optimizedCountAll() (int, int, int, int, int, int) {
 	return wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount
 }
 
-//Further Optimization (Using goroutines)
+// Further Optimization Section
+// This function uses goroutines to process the file in parallel
+
+// parallelCountAll counts words, punctuation, vowels, sentences, paragraphs, and digits using goroutines
 func parallelCountAll() (int, int, int, int, int, int) {
 	file, err := os.Open("file.txt")
 	if err != nil {
@@ -240,9 +254,10 @@ func parallelCountAll() (int, int, int, int, int, int) {
 	paragraphChan := make(chan int, 8)
 	digitChan := make(chan int, 8)
 
-	chunkSize := 1000000 // Adjust this value based on your file size and system capabilities
+	chunkSize := 1000000 
 	chunk := make([]string, 0, chunkSize)
 
+	// processChunk processes a chunk of the file and sends results through channels
 	processChunk := func(chunk []string) {
 		defer wg.Done()
 		wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount := 0, 0, 0, 0, 0, 0
@@ -251,6 +266,7 @@ func parallelCountAll() (int, int, int, int, int, int) {
 		consecutiveNewlines := 0
 
 		for _, char := range chunk {
+			// Similar logic to optimizedCountAll, but for a chunk of the file
 			if unicode.IsSpace([]rune(char)[0]) {
 				if inWord {
 					wordCount++
@@ -295,6 +311,7 @@ func parallelCountAll() (int, int, int, int, int, int) {
 			paragraphCount++
 		}
 
+		// Send results through channels
 		wordChan <- wordCount
 		punctChan <- punctCount
 		vowelChan <- vowelCount
@@ -303,6 +320,7 @@ func parallelCountAll() (int, int, int, int, int, int) {
 		digitChan <- digitCount
 	}
 
+	// Read the file in chunks and process each chunk in a separate goroutine
 	for scanner.Scan() {
 		chunk = append(chunk, scanner.Text())
 		if len(chunk) == chunkSize {
@@ -312,11 +330,13 @@ func parallelCountAll() (int, int, int, int, int, int) {
 		}
 	}
 
+	// Process the last chunk if it's not empty
 	if len(chunk) > 0 {
 		wg.Add(1)
 		go processChunk(chunk)
 	}
 
+	// Close channels when all goroutines are done
 	go func() {
 		wg.Wait()
 		close(wordChan)
@@ -327,6 +347,7 @@ func parallelCountAll() (int, int, int, int, int, int) {
 		close(digitChan)
 	}()
 
+	// Sum up the results from all goroutines
 	totalWordCount, totalPunctCount, totalVowelCount, totalSentenceCount, totalParagraphCount, totalDigitCount := 0, 0, 0, 0, 0, 0
 
 	for wordCount := range wordChan {
@@ -351,13 +372,8 @@ func parallelCountAll() (int, int, int, int, int, int) {
 	return totalWordCount, totalPunctCount, totalVowelCount, totalSentenceCount, totalParagraphCount, totalDigitCount
 }
 
-
-
-
-
-
-
 func main() {
+	// Unoptimized version
 	start := time.Now()
 
 	wordCount := countWords()
@@ -378,6 +394,7 @@ func main() {
 	fmt.Printf("Total digit count: %d\n", digitCount)
 	fmt.Printf("Total execution time: %v\n", duration)
 
+	// Optimized version (single pass)
 	fmt.Println("\nOptimized Code (Reading the file once)")
 	start = time.Now()
 
@@ -395,6 +412,7 @@ func main() {
 
 	fmt.Printf("\nPerformance improvement: %.2f%%\n", (1 - float64(optimizedDuration)/float64(duration)) * 100)
 
+	// Parallel version
 	fmt.Println("\nOptimized Code (Using goroutines)")
 	start = time.Now()
 
@@ -410,6 +428,6 @@ func main() {
 	fmt.Printf("Total digit count: %d\n", parallelDigitCount)
 	fmt.Printf("Total execution time: %v\n", parallelDuration)
 
-    //Performance improvement
+   
 	fmt.Printf("\nPerformance improvement: %.2f%%\n", (1 - float64(parallelDuration)/float64(optimizedDuration)) * 100)
 }
