@@ -421,7 +421,7 @@ func main() {
 	fmt.Printf("\nPerformance improvement: %.2f%%\n", (1 - float64(optimizedDuration)/float64(duration)) * 100)
 
 	// Parallel version
-	fmt.Println("\nOptimized Code (Using goroutines)")
+	fmt.Println("\nFurther Optimized Code (Using goroutines)")
 	start = time.Now()
 
 	parallelWordCount, parallelPunctCount, parallelVowelCount, parallelSentenceCount, parallelParagraphCount, parallelDigitCount := parallelCountAll()
