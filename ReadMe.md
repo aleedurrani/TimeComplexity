@@ -85,8 +85,6 @@ Based on the output provided:
    - The parallel version achieved a 31.54% improvement in execution time compared to the optimized (single-pass) version.
    - Compared to the original unoptimized version, the total improvement is approximately 59.73%.
 
-### Note on Results
-There are slight discrepancies in the word and paragraph counts in the parallel version. This could be due to edge cases at chunk boundaries and may require further refinement of the parallel processing algorithm.
 
 ## Conclusion
 The optimizations demonstrate significant improvements in processing time:
