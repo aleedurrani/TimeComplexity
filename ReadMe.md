@@ -17,29 +17,27 @@ This Go program processes a text file (`file.txt`) and performs various counting
   - `isPunctuation()`
   - `isVowel()`
   - `isSentence()`
-  - `isParagraph()`
   - `isDigit()`
 - The `main()` function orchestrates the execution of all counting operations and measures the total execution time.
 
 ## Performance Analysis
 Based on the output provided:
 
-1. **Execution Time**: The program completed all operations in 522.5169ms, which is relatively fast for processing a large text file.
+1. **Execution Time**: The program completed all operations in 427.7591ms, which is relatively fast for processing a large text file.
 
 2. **File Statistics**:
    - Words: 1,048,500
    - Punctuation marks: 115,305
    - Vowels: 2,416,411
    - Sentences: 62,714
-   - Paragraphs: 20,968
+   - Paragraphs: 10,485
    - Digits: 407,936
 
 3. **Observations**:
    - The text contains a high number of words, indicating a substantial document.
    - There's a significant number of vowels, as expected in most languages.
-   - The ratio of sentences to paragraphs (about 3:1) suggests relatively short paragraphs on average.
+   - The ratio of sentences to paragraphs (about 6:1) suggests relatively long paragraphs on average.
    - The presence of over 400,000 digits indicates that the text likely includes numerical data or references.
-
 
 ## Optimized Code (Reading the file once)
 
@@ -54,27 +52,23 @@ The optimized version of the program uses a single function `optimizedCountAll()
 ## Performance Analysis
 Based on the output provided:
 
-1. **Execution Time**: The optimized version completed all operations in 189.9502ms, which is a substantial improvement over the unoptimized version's 515.7785ms.
+1. **Execution Time**: The optimized version completed all operations in 294.7336ms, which is a substantial improvement over the unoptimized version's 427.7591ms.
 
 2. **File Statistics**:
-   - Words: 1,186,622
+   - Words: 1,048,500
    - Punctuation marks: 115,305
    - Vowels: 2,416,411
    - Sentences: 62,714
-   - Paragraphs: 20,968
+   - Paragraphs: 10,485
    - Digits: 407,936
 
 3. **Observations**:
-   - Most statistics remain the same as in the unoptimized version, ensuring consistency in counting.
-   - The word count is higher in the optimized version (1,186,622 vs 1,048,500), which may be due to a difference in word boundary detection between the two methods.
+   - All statistics remain the same as in the unoptimized version, ensuring consistency in counting.
+   - The optimized version maintains accuracy while significantly improving performance.
 
 4. **Performance Improvement**:
-   - The optimized code achieved a 63.17% improvement in execution time.
+   - The optimized code achieved a 31.10% improvement in execution time.
    - This significant speedup demonstrates the effectiveness of minimizing file I/O operations and processing the text in a single pass.
 
 ## Conclusion
-The optimized version of the code demonstrates superior performance by reducing redundant file reads and combining all counting operations into a single pass through the text. This approach not only improves execution time but also potentially provides more accurate word counting. The trade-off between the slight increase in code complexity and the substantial performance gain makes this optimization highly beneficial for processing large text files.
-
-
-
-
+The optimized version of the code demonstrates superior performance by reducing redundant file reads and combining all counting operations into a single pass through the text. This approach improves execution time without compromising accuracy. The trade-off between the slight increase in code complexity and the substantial performance gain makes this optimization highly beneficial for processing large text files.

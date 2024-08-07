@@ -108,21 +108,27 @@ func countParagraphs() int {
     }
     defer file.Close()
     scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanRunes)
+    scanner.Split(bufio.ScanLines)
     paragraphCount := 0
+    emptyLine := false
     for scanner.Scan() {
-        char := scanner.Text()
-        if isParagraph(char) {
-            paragraphCount++
+        line := scanner.Text()
+        if len(strings.TrimSpace(line)) == 0 {
+            if !emptyLine {
+                paragraphCount++
+                emptyLine = true
+            }
+        } else {
+            emptyLine = false
         }
+    }
+    if !emptyLine {
+        paragraphCount++
     }
     return paragraphCount
 }
 
-func isParagraph(char string) bool {
-	paragraphs := "\n"
-	return len(char) == 1 && strings.Contains(paragraphs, char)
-}
+
 
 func countDigits() int {
 	file, err := os.Open("file.txt")
@@ -147,9 +153,7 @@ func isDigit(char string) bool {
 	return len(char) == 1 && strings.Contains(digits, char)
 }
 
-
 //Optimized Code (Reading the file once)
-
 func optimizedCountAll() (int, int, int, int, int, int) {
 	file, err := os.Open("file.txt")
 	if err != nil {
@@ -159,36 +163,58 @@ func optimizedCountAll() (int, int, int, int, int, int) {
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanRunes)
-
 	wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount := 0, 0, 0, 0, 0, 0
 	inWord := false
+	emptyLine := true
+	consecutiveNewlines := 0
 
 	for scanner.Scan() {
 		char := scanner.Text()
 
-		if unicode.IsLetter([]rune(char)[0]) {
-			if !inWord {
+		if unicode.IsSpace([]rune(char)[0]) {
+			if inWord {
 				wordCount++
-				inWord = true
+				inWord = false
 			}
+			if char == "\n" {
+				consecutiveNewlines++
+				if consecutiveNewlines == 2 {
+					paragraphCount++
+					emptyLine = true
+					consecutiveNewlines = 1
+				}
+			} else {
+				consecutiveNewlines = 0
+			}
+		} else {
+			inWord = true
+			emptyLine = false
+			consecutiveNewlines = 0
+		}
+
+		if unicode.IsLetter([]rune(char)[0]) {
 			if isVowel(char) {
 				vowelCount++
 			}
-		} else {
-			inWord = false
-			if isPunctuation(char) {
-				punctCount++
-			}
-			if isSentence(char) {
-				sentenceCount++
-			}
-			if isParagraph(char) {
-				paragraphCount++
-			}
-			if isDigit(char) {
-				digitCount++
-			}
+		} else if unicode.IsDigit([]rune(char)[0]) {
+			digitCount++
+		} else if isPunctuation(char) {
+			punctCount++
 		}
+
+		if isSentence(char) {
+			sentenceCount++
+		}
+
+		
+	}
+
+	if inWord {
+		wordCount++
+	}
+
+	if !emptyLine {
+		paragraphCount++
 	}
 
 	return wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount
