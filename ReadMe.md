@@ -88,6 +88,6 @@ Based on the output provided:
 
 ## Conclusion
 The optimizations demonstrate significant improvements in processing time:
-1. The single-pass optimization reduced execution time by 41.17%.
-2. The parallel processing further reduced the time by an additional 31.54%.
+1. The single-pass optimization reduced execution time by **41.17%**.
+2. The parallel processing further reduced the time by an additional **31.54%**.
 These optimizations showcase the importance of efficient I/O operations and the potential of concurrent processing in Go for handling large datasets.
