@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 	"time"
 	"unicode"
 )
@@ -220,6 +221,139 @@ func optimizedCountAll() (int, int, int, int, int, int) {
 	return wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount
 }
 
+//Further Optimization (Using goroutines)
+func parallelCountAll() (int, int, int, int, int, int) {
+	file, err := os.Open("file.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanRunes)
+
+	var wg sync.WaitGroup
+	wordChan := make(chan int, 8)
+	punctChan := make(chan int, 8)
+	vowelChan := make(chan int, 8)
+	sentenceChan := make(chan int, 8)
+	paragraphChan := make(chan int, 8)
+	digitChan := make(chan int, 8)
+
+	chunkSize := 1000000 // Adjust this value based on your file size and system capabilities
+	chunk := make([]string, 0, chunkSize)
+
+	processChunk := func(chunk []string) {
+		defer wg.Done()
+		wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount := 0, 0, 0, 0, 0, 0
+		inWord := false
+		emptyLine := true
+		consecutiveNewlines := 0
+
+		for _, char := range chunk {
+			if unicode.IsSpace([]rune(char)[0]) {
+				if inWord {
+					wordCount++
+					inWord = false
+				}
+				if char == "\n" {
+					consecutiveNewlines++
+					if consecutiveNewlines == 2 {
+						paragraphCount++
+						emptyLine = true
+						consecutiveNewlines = 1
+					}
+				} else {
+					consecutiveNewlines = 0
+				}
+			} else {
+				inWord = true
+				emptyLine = false
+				consecutiveNewlines = 0
+			}
+
+			if unicode.IsLetter([]rune(char)[0]) {
+				if isVowel(char) {
+					vowelCount++
+				}
+			} else if unicode.IsDigit([]rune(char)[0]) {
+				digitCount++
+			} else if isPunctuation(char) {
+				punctCount++
+			}
+
+			if isSentence(char) {
+				sentenceCount++
+			}
+		}
+
+		if inWord {
+			wordCount++
+		}
+
+		if !emptyLine {
+			paragraphCount++
+		}
+
+		wordChan <- wordCount
+		punctChan <- punctCount
+		vowelChan <- vowelCount
+		sentenceChan <- sentenceCount
+		paragraphChan <- paragraphCount
+		digitChan <- digitCount
+	}
+
+	for scanner.Scan() {
+		chunk = append(chunk, scanner.Text())
+		if len(chunk) == chunkSize {
+			wg.Add(1)
+			go processChunk(chunk)
+			chunk = make([]string, 0, chunkSize)
+		}
+	}
+
+	if len(chunk) > 0 {
+		wg.Add(1)
+		go processChunk(chunk)
+	}
+
+	go func() {
+		wg.Wait()
+		close(wordChan)
+		close(punctChan)
+		close(vowelChan)
+		close(sentenceChan)
+		close(paragraphChan)
+		close(digitChan)
+	}()
+
+	totalWordCount, totalPunctCount, totalVowelCount, totalSentenceCount, totalParagraphCount, totalDigitCount := 0, 0, 0, 0, 0, 0
+
+	for wordCount := range wordChan {
+		totalWordCount += wordCount
+	}
+	for punctCount := range punctChan {
+		totalPunctCount += punctCount
+	}
+	for vowelCount := range vowelChan {
+		totalVowelCount += vowelCount
+	}
+	for sentenceCount := range sentenceChan {
+		totalSentenceCount += sentenceCount
+	}
+	for paragraphCount := range paragraphChan {
+		totalParagraphCount += paragraphCount
+	}
+	for digitCount := range digitChan {
+		totalDigitCount += digitCount
+	}
+
+	return totalWordCount, totalPunctCount, totalVowelCount, totalSentenceCount, totalParagraphCount, totalDigitCount
+}
+
+
+
+
 
 
 
@@ -260,4 +394,22 @@ func main() {
 	fmt.Printf("Total execution time: %v\n", optimizedDuration)
 
 	fmt.Printf("\nPerformance improvement: %.2f%%\n", (1 - float64(optimizedDuration)/float64(duration)) * 100)
+
+	fmt.Println("\nOptimized Code (Using goroutines)")
+	start = time.Now()
+
+	parallelWordCount, parallelPunctCount, parallelVowelCount, parallelSentenceCount, parallelParagraphCount, parallelDigitCount := parallelCountAll()
+
+	parallelDuration := time.Since(start)
+
+	fmt.Printf("Total word count: %d\n", parallelWordCount)
+	fmt.Printf("Total punctuation count: %d\n", parallelPunctCount)
+	fmt.Printf("Total vowel count: %d\n", parallelVowelCount)
+	fmt.Printf("Total sentence count: %d\n", parallelSentenceCount)
+	fmt.Printf("Total paragraph count: %d\n", parallelParagraphCount)
+	fmt.Printf("Total digit count: %d\n", parallelDigitCount)
+	fmt.Printf("Total execution time: %v\n", parallelDuration)
+
+    //Performance improvement
+	fmt.Printf("\nPerformance improvement: %.2f%%\n", (1 - float64(parallelDuration)/float64(optimizedDuration)) * 100)
 }
