@@ -258,15 +258,14 @@ func parallelCountAll() (int, int, int, int, int, int) {
 	chunk := make([]string, 0, chunkSize)
 
 	// processChunk processes a chunk of the file and sends results through channels
-	processChunk := func(chunk []string) {
+	processChunk := func(chunk []string, isFirstChunk, isLastChunk bool) {
 		defer wg.Done()
 		wordCount, punctCount, vowelCount, sentenceCount, paragraphCount, digitCount := 0, 0, 0, 0, 0, 0
 		inWord := false
 		emptyLine := true
 		consecutiveNewlines := 0
 
-		for _, char := range chunk {
-			// Similar logic to optimizedCountAll, but for a chunk of the file
+		for i, char := range chunk {
 			if unicode.IsSpace([]rune(char)[0]) {
 				if inWord {
 					wordCount++
@@ -301,13 +300,20 @@ func parallelCountAll() (int, int, int, int, int, int) {
 			if isSentence(char) {
 				sentenceCount++
 			}
+
+			// Handle the case where a word is split between chunks
+			if !isFirstChunk && i == 0 && !unicode.IsSpace([]rune(char)[0]) && !inWord {
+				wordCount++
+			}
 		}
 
-		if inWord {
+		// Only count the last word if it's the last chunk and we're in a word
+		if inWord && isLastChunk {
 			wordCount++
 		}
 
-		if !emptyLine {
+		// Only count the last paragraph if it's the last chunk and not an empty line
+		if !emptyLine && isLastChunk {
 			paragraphCount++
 		}
 
@@ -320,20 +326,22 @@ func parallelCountAll() (int, int, int, int, int, int) {
 		digitChan <- digitCount
 	}
 
+	chunkCount := 0
 	// Read the file in chunks and process each chunk in a separate goroutine
 	for scanner.Scan() {
 		chunk = append(chunk, scanner.Text())
 		if len(chunk) == chunkSize {
 			wg.Add(1)
-			go processChunk(chunk)
+			go processChunk(chunk, chunkCount == 0, false)
 			chunk = make([]string, 0, chunkSize)
+			chunkCount++
 		}
 	}
 
 	// Process the last chunk if it's not empty
 	if len(chunk) > 0 {
 		wg.Add(1)
-		go processChunk(chunk)
+		go processChunk(chunk, chunkCount == 0, true)
 	}
 
 	// Close channels when all goroutines are done
