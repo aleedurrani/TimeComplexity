@@ -9,9 +9,8 @@ import (
 	"unicode"
 )
 
-// This function uses goroutines to process the file in parallel
-
-// parallelCountAll counts words, punctuation, vowels, sentences, paragraphs, and digits using goroutines
+// This function uses goroutines to process the file in parallel with chunking based on defined number of go routines
+// The number of go routines is defined by the user
 func ParallelCountAll() (int, int, int, int, int, int) {
 	file, err := os.Open("file.txt")
 	if err != nil {
