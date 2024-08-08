@@ -11,7 +11,7 @@ import (
 
 // This function uses goroutines to process the file in parallel
 
-// parallelCountAll counts words, punctuation, vowels, sentences, paragraphs, and digits using goroutines
+// ParallelCountAll counts words, punctuation, vowels, sentences, paragraphs, and digits using goroutines
 func ParallelCountAll() (int, int, int, int, int, int) {
 	file, err := os.Open("../../assets/file.txt")
 	if err != nil {

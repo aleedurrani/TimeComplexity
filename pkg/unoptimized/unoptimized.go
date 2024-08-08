@@ -11,7 +11,7 @@ import (
 // Unoptimized Code Section
 // These functions read the file multiple times, once for each counting operation
 
-// countWords counts the total number of words in the file
+// CountWords counts the total number of words in the file
 func CountWords() int {
     file, err := os.Open("../../assets/file.txt")
     if err != nil {
@@ -28,7 +28,7 @@ func CountWords() int {
     return wordCount
 }
 
-// countPunctuation counts the total number of punctuation marks in the file
+// CountPunctuation counts the total number of punctuation marks in the file
 func CountPunctuation() int {
 	file, err := os.Open("../../assets/file.txt")
     if err != nil {
@@ -53,7 +53,7 @@ func isPunctuation(s string) bool {
     return len(s) == 1 && strings.Contains(punctuations, s)
 }
 
-// countVowels counts the total number of vowels in the file
+// CountVowels counts the total number of vowels in the file
 func CountVowels() int {
 	file, err := os.Open("../../assets/file.txt")
     if err != nil {
@@ -78,7 +78,7 @@ func isVowel(char string) bool {
 	return len(char) == 1 && strings.Contains(vowels, char)
 }
 
-// countSentences counts the total number of sentences in the file
+// CountSentences counts the total number of sentences in the file
 func CountSentences() int {
 	file, err := os.Open("../../assets/file.txt")
     if err != nil {
@@ -112,7 +112,7 @@ func isSentence(char string) bool {
 	return len(char) == 1 && strings.Contains(sentences, char)
 }
 
-// countParagraphs counts the total number of paragraphs in the file
+// CountParagraphs counts the total number of paragraphs in the file
 func CountParagraphs() int {
 	file, err := os.Open("../../assets/file.txt")
     if err != nil {
@@ -131,7 +131,7 @@ func CountParagraphs() int {
     return paragraphCount
 }
 
-// countDigits counts the total number of digits in the file
+// CountDigits counts the total number of digits in the file
 func CountDigits() int {
 	file, err := os.Open("../../assets/file.txt")
     if err != nil {
