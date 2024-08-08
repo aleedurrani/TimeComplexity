@@ -13,7 +13,7 @@ import (
 
 // countWords counts the total number of words in the file
 func CountWords() int {
-    file, err := os.Open("file.txt")
+    file, err := os.Open("../../assets/file.txt")
     if err != nil {
         log.Fatal(err)
     }
@@ -30,7 +30,7 @@ func CountWords() int {
 
 // countPunctuation counts the total number of punctuation marks in the file
 func CountPunctuation() int {
-	file, err := os.Open("file.txt")
+	file, err := os.Open("../../assets/file.txt")
     if err != nil {
         log.Fatal(err)
     }
@@ -55,7 +55,7 @@ func isPunctuation(s string) bool {
 
 // countVowels counts the total number of vowels in the file
 func CountVowels() int {
-	file, err := os.Open("file.txt")
+	file, err := os.Open("../../assets/file.txt")
     if err != nil {
         log.Fatal(err)
     }
@@ -80,7 +80,7 @@ func isVowel(char string) bool {
 
 // countSentences counts the total number of sentences in the file
 func CountSentences() int {
-	file, err := os.Open("file.txt")
+	file, err := os.Open("../../assets/file.txt")
     if err != nil {
         log.Fatal(err)
     }
@@ -114,7 +114,7 @@ func isSentence(char string) bool {
 
 // countParagraphs counts the total number of paragraphs in the file
 func CountParagraphs() int {
-	file, err := os.Open("file.txt")
+	file, err := os.Open("../../assets/file.txt")
     if err != nil {
         log.Fatal(err)
     }
@@ -133,7 +133,7 @@ func CountParagraphs() int {
 
 // countDigits counts the total number of digits in the file
 func CountDigits() int {
-	file, err := os.Open("file.txt")
+	file, err := os.Open("../../assets/file.txt")
     if err != nil {
         log.Fatal(err)
     }
@@ -149,4 +149,3 @@ func CountDigits() int {
     }
     return digitCount
 }
-

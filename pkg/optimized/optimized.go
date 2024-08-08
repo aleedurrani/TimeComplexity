@@ -10,7 +10,7 @@ import (
 
 // optimizedCountAll counts words, punctuation, vowels, sentences, paragraphs, and digits in a single pass
 func OptimizedCountAll() (int, int, int, int, int, int) {
-	file, err := os.Open("file.txt")
+	file, err := os.Open("../../assets/file.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
