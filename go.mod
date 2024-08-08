@@ -1,3 +1,3 @@
-module time_complexity
+module github.com/aleedurrani/TimeComplexity
 
 go 1.22.5

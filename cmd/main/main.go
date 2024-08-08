@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"time"
-	"time_complexity/pkg/unoptimized"
-	"time_complexity/pkg/optimized"
-	"time_complexity/pkg/parallel"
-	"time_complexity/pkg/parallelextended"
+	"github.com/aleedurrani/TimeComplexity/pkg/unoptimized"
+	"github.com/aleedurrani/TimeComplexity/pkg/optimized"
+	"github.com/aleedurrani/TimeComplexity/pkg/parallel"
+	"github.com/aleedurrani/TimeComplexity/pkg/parallelextended"
 )
 
 func main() {
