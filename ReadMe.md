@@ -126,7 +126,7 @@ Based on the provided data for different numbers of goroutines:
 The optimizations demonstrate significant improvements in processing time for the file:
 1. The single-pass optimization reduced execution time by about 47-48%.
 2. The simple parallel processing further reduced the time by an additional 54-56%.
-3. The parallel extended version with optimal goroutine count (8-100) achieved the best performance, improving by about 40% over the simple parallel version.
+3. The parallel extended version with **optimal goroutine count (8-100)** achieved the best performance, improving by about 40% over the simple parallel version.
 
 These optimizations showcase:
 - The importance of efficient I/O operations.
