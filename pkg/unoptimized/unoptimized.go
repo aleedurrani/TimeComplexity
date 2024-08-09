@@ -1,92 +1,88 @@
 package unoptimized
 
 import (
-	"bufio"
-	"log"
-	"os"
-	"strings"
+	
 	"unicode"
+	"github.com/aleedurrani/TimeComplexity/pkg/fileHandling"
+	"github.com/aleedurrani/TimeComplexity/pkg/helperFunctions"
 )
 
-// Unoptimized Code Section
 // These functions read the file multiple times, once for each counting operation
 
 // CountWords counts the total number of words in the file
 func CountWords() int {
-    file, err := os.Open("../../assets/file.txt")
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer file.Close()
 
-    scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanWords)
+    file := fileHandling.OpenFile()
+    defer file.Close()
+    scanner := fileHandling.CreateRuneScanner(file)
+
     wordCount := 0
+    inWord := false
+
     for scanner.Scan() {
+        char := scanner.Text()
+        if unicode.IsSpace([]rune(char)[0]) {
+            if inWord {
+                wordCount++
+                inWord = false
+            }
+        } else {
+            inWord = true
+        }
+    }
+
+    // Handle the case where the file doesn't end with whitespace
+    if inWord {
         wordCount++
     }
+   
     return wordCount
 }
 
+
 // CountPunctuation counts the total number of punctuation marks in the file
 func CountPunctuation() int {
-	file, err := os.Open("../../assets/file.txt")
-    if err != nil {
-        log.Fatal(err)
-    }
+
+    file := fileHandling.OpenFile()
     defer file.Close()
-    scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanRunes)
+    scanner := fileHandling.CreateRuneScanner(file)
+    
     punctCount := 0
     for scanner.Scan() {
         char := scanner.Text()
-        if isPunctuation(char) {
+        if helperFunctions.IsPunctuation(char) {
             punctCount++
         }
     }
     return punctCount
 }
 
-// isPunctuation checks if a given character is a punctuation mark
-func isPunctuation(s string) bool {
-    punctuations := ".,;:!?-()[]{}'\""
-    return len(s) == 1 && strings.Contains(punctuations, s)
-}
 
 // CountVowels counts the total number of vowels in the file
 func CountVowels() int {
-	file, err := os.Open("../../assets/file.txt")
-    if err != nil {
-        log.Fatal(err)
-    }
+
+	file := fileHandling.OpenFile()
     defer file.Close()
-    scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanRunes)
+    scanner := fileHandling.CreateRuneScanner(file)
+    
     vowelCount := 0
     for scanner.Scan() {
         char := scanner.Text()
-        if isVowel(char) {
+        if helperFunctions.IsVowel(char) {
             vowelCount++
         }
     }
     return vowelCount
 }
 
-// isVowel checks if a given character is a vowel
-func isVowel(char string) bool {
-	vowels := "aeiouAEIOU"
-	return len(char) == 1 && strings.Contains(vowels, char)
-}
 
 // CountSentences counts the total number of sentences in the file
 func CountSentences() int {
-	file, err := os.Open("../../assets/file.txt")
-    if err != nil {
-        log.Fatal(err)
-    }
+	
+    file := fileHandling.OpenFile()
     defer file.Close()
-    scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanRunes)
+    scanner := fileHandling.CreateRuneScanner(file)
+
     sentenceCount := 0
     inSentence := false
     for scanner.Scan() {
@@ -94,7 +90,7 @@ func CountSentences() int {
         if !inSentence && !unicode.IsSpace([]rune(char)[0]) {
             inSentence = true
         }
-        if inSentence && isSentence(char) {
+        if inSentence && helperFunctions.IsSentence(char) {
             sentenceCount++
             inSentence = false
         }
@@ -106,25 +102,19 @@ func CountSentences() int {
     return sentenceCount
 }
 
-// isSentence checks if a given character is a sentence-ending punctuation
-func isSentence(char string) bool {
-	sentences := "."
-	return len(char) == 1 && strings.Contains(sentences, char)
-}
 
 // CountParagraphs counts the total number of paragraphs in the file
 func CountParagraphs() int {
-	file, err := os.Open("../../assets/file.txt")
-    if err != nil {
-        log.Fatal(err)
-    }
+	
+    file := fileHandling.OpenFile()
     defer file.Close()
-    scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanRunes)
+    scanner := fileHandling.CreateRuneScanner(file)
+
     paragraphCount := 0
     for scanner.Scan() {
-        char := scanner.Text()
-        if char == "\n" {
+        char := scanner.Text()[0]
+
+        if char == '\n' {
             paragraphCount++
         }
     }
@@ -133,13 +123,11 @@ func CountParagraphs() int {
 
 // CountDigits counts the total number of digits in the file
 func CountDigits() int {
-	file, err := os.Open("../../assets/file.txt")
-    if err != nil {
-        log.Fatal(err)
-    }
+	
+    file := fileHandling.OpenFile()
     defer file.Close()
-    scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanRunes)
+    scanner := fileHandling.CreateRuneScanner(file)
+
     digitCount := 0
     for scanner.Scan() {
         char := scanner.Text()

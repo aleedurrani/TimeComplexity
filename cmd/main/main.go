@@ -6,8 +6,10 @@ import (
 	"github.com/aleedurrani/TimeComplexity/pkg/unoptimized"
 	"github.com/aleedurrani/TimeComplexity/pkg/optimized"
 	"github.com/aleedurrani/TimeComplexity/pkg/parallel"
-	"github.com/aleedurrani/TimeComplexity/pkg/parallelextended"
+	"github.com/aleedurrani/TimeComplexity/pkg/parallelExtended"
 )
+
+
 
 func main() {
 	// Unoptimized version
@@ -35,16 +37,16 @@ func main() {
 	fmt.Println("\nOptimized Code (Reading the file once)")
 	start = time.Now()
 
-	optimizedWordCount, optimizedPunctCount, optimizedVowelCount, optimizedSentenceCount, optimizedParagraphCount, optimizedDigitCount := optimized.OptimizedCountAll()
+    optimizedCounts := optimized.OptimizedCountAll()
 
 	optimizedDuration := time.Since(start)
 
-	fmt.Printf("Total word count: %d\n", optimizedWordCount)
-	fmt.Printf("Total punctuation count: %d\n", optimizedPunctCount)
-	fmt.Printf("Total vowel count: %d\n", optimizedVowelCount)
-	fmt.Printf("Total sentence count: %d\n", optimizedSentenceCount)
-	fmt.Printf("Total paragraph count: %d\n", optimizedParagraphCount)
-	fmt.Printf("Total digit count: %d\n", optimizedDigitCount)
+	fmt.Printf("Total word count: %d\n", optimizedCounts.Word)
+	fmt.Printf("Total punctuation count: %d\n", optimizedCounts.Punct)
+	fmt.Printf("Total vowel count: %d\n", optimizedCounts.Vowel)
+	fmt.Printf("Total sentence count: %d\n", optimizedCounts.Sentence)
+	fmt.Printf("Total paragraph count: %d\n", optimizedCounts.Paragraph)
+	fmt.Printf("Total digit count: %d\n", optimizedCounts.Digit)
 	fmt.Printf("Total execution time: %v\n", optimizedDuration)
 
 	fmt.Printf("\nPerformance improvement: %.2f%%\n", (1 - float64(optimizedDuration)/float64(duration)) * 100)
@@ -53,16 +55,16 @@ func main() {
 	fmt.Println("\nFurther Optimized Code (Using goroutines)")
 	start = time.Now()
 
-	parallelWordCount, parallelPunctCount, parallelVowelCount, parallelSentenceCount, parallelParagraphCount, parallelDigitCount := parallel.ParallelCountAll()
+	parallelCounts := parallel.ParallelCountAll()
 
 	parallelDuration := time.Since(start)
 
-	fmt.Printf("Total word count: %d\n", parallelWordCount)
-	fmt.Printf("Total punctuation count: %d\n", parallelPunctCount)
-	fmt.Printf("Total vowel count: %d\n", parallelVowelCount)
-	fmt.Printf("Total sentence count: %d\n", parallelSentenceCount)
-	fmt.Printf("Total paragraph count: %d\n", parallelParagraphCount)
-	fmt.Printf("Total digit count: %d\n", parallelDigitCount)
+	fmt.Printf("Total word count: %d\n", parallelCounts.Word)
+	fmt.Printf("Total punctuation count: %d\n", parallelCounts.Punct)
+	fmt.Printf("Total vowel count: %d\n", parallelCounts.Vowel)
+	fmt.Printf("Total sentence count: %d\n", parallelCounts.Sentence)
+	fmt.Printf("Total paragraph count: %d\n", parallelCounts.Paragraph)
+	fmt.Printf("Total digit count: %d\n", parallelCounts.Digit)
 	fmt.Printf("Total execution time: %v\n", parallelDuration)
 
 	fmt.Printf("\nPerformance improvement: %.2f%%\n", (1 - float64(parallelDuration)/float64(optimizedDuration)) * 100)
@@ -71,16 +73,16 @@ func main() {
 	fmt.Println("\nParallel Extended Code (Using goroutines with improved chunk processing)")
 	start = time.Now()
 
-	parallelExtendedWordCount, parallelExtendedPunctCount, parallelExtendedVowelCount, parallelExtendedSentenceCount, parallelExtendedParagraphCount, parallelExtendedDigitCount := parallelextended.ParallelCountAll()
+	parallelExtendedCounts := parallelExtended.ParallelCountAll()
 
 	parallelExtendedDuration := time.Since(start)
 
-	fmt.Printf("Total word count: %d\n", parallelExtendedWordCount)
-	fmt.Printf("Total punctuation count: %d\n", parallelExtendedPunctCount)
-	fmt.Printf("Total vowel count: %d\n", parallelExtendedVowelCount)
-	fmt.Printf("Total sentence count: %d\n", parallelExtendedSentenceCount)
-	fmt.Printf("Total paragraph count: %d\n", parallelExtendedParagraphCount)
-	fmt.Printf("Total digit count: %d\n", parallelExtendedDigitCount)
+	fmt.Printf("Total word count: %d\n", parallelExtendedCounts.Word)
+	fmt.Printf("Total punctuation count: %d\n", parallelExtendedCounts.Punct)
+	fmt.Printf("Total vowel count: %d\n", parallelExtendedCounts.Vowel)
+	fmt.Printf("Total sentence count: %d\n", parallelExtendedCounts.Sentence)
+	fmt.Printf("Total paragraph count: %d\n", parallelExtendedCounts.Paragraph)
+	fmt.Printf("Total digit count: %d\n", parallelExtendedCounts.Digit)
 	fmt.Printf("Total execution time: %v\n", parallelExtendedDuration)
 
 	fmt.Printf("\nPerformance improvement %.2f%%\n", (1 - float64(parallelExtendedDuration)/float64(parallelDuration)) * 100)
