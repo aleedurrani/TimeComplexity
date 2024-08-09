@@ -6,8 +6,6 @@ import (
 	"github.com/aleedurrani/TimeComplexity/pkg/fileHandling"
 )
 
-// This function uses goroutines to process the file in parallel
-
 // ParallelCountAll counts words, punctuation, vowels, sentences, paragraphs, and digits using goroutines
 func ParallelCountAll() (helperFunctions.Counts) {
 
