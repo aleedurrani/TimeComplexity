@@ -15,6 +15,16 @@ type Counts struct {
 	Digit     int
 }
 
+// CountChannels is a struct that holds the channels for the counts
+type CountChannels struct {
+	WordChan      chan int
+	PunctChan     chan int
+	VowelChan     chan int
+	SentenceChan  chan int
+	ParagraphChan chan int
+	DigitChan     chan int
+}
+
 // IsPunctuation checks if a given character is a punctuation mark
 func IsPunctuation(s string) bool {
     punctuations := ".,;:!?-()[]{}'\""
@@ -33,6 +43,7 @@ func IsSentence(char string) bool {
 	return len(char) == 1 && strings.Contains(sentences, char)
 }
 
+// ProcessChar processes a character and updates the counts
 func ProcessChar(char byte, inWord *bool, counts *Counts) {
 	if unicode.IsSpace(rune(char)) {
 		if *inWord {
@@ -61,12 +72,4 @@ func ProcessChar(char byte, inWord *bool, counts *Counts) {
 	if IsSentence(string(char)) {
 		counts.Sentence++
 	}
-}
-type CountChannels struct {
-	WordChan      chan int
-	PunctChan     chan int
-	VowelChan     chan int
-	SentenceChan  chan int
-	ParagraphChan chan int
-	DigitChan     chan int
 }
