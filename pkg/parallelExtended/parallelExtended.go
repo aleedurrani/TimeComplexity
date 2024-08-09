@@ -23,12 +23,7 @@ func ParallelCountAll() (helperFunctions.Counts) {
 	chunkSize := fileSize / int64(numRoutines)
 
 	var wg sync.WaitGroup
-	wordChan := make(chan int, numRoutines)
-	punctChan := make(chan int, numRoutines)
-	vowelChan := make(chan int, numRoutines)
-	sentenceChan := make(chan int, numRoutines)
-	paragraphChan := make(chan int, numRoutines)
-	digitChan := make(chan int, numRoutines)
+	countChannels := helperFunctions.CreateCountChannelsParallelExtended(numRoutines)
 
 	// processChunk processes a chunk of the file and sends results through channels
 	processChunk := func(start, end int64) {
@@ -59,12 +54,7 @@ func ParallelCountAll() (helperFunctions.Counts) {
 		}
 
 		// Send results through channels
-		wordChan <- counts.Word
-		punctChan <- counts.Punct
-	    vowelChan <- counts.Vowel
-		sentenceChan <- counts.Sentence
-		paragraphChan <- counts.Paragraph
-		digitChan <- counts.Digit
+		helperFunctions.SendCounts(counts, countChannels)
 	}
 
 	// Start goroutines
@@ -81,25 +71,9 @@ func ParallelCountAll() (helperFunctions.Counts) {
 	// Close channels when all goroutines are done
 	go func() {
 		wg.Wait()
-		close(wordChan)
-		close(punctChan)
-		close(vowelChan)
-		close(sentenceChan)
-		close(paragraphChan)
-		close(digitChan)
+		helperFunctions.CloseChannels(countChannels)
 	}()
 
-	// Sum up the results from all goroutines
-	counts := helperFunctions.Counts{}
 
-	for i := 0; i < numRoutines; i++ {
-		counts.Word += <-wordChan
-		counts.Punct += <-punctChan
-		counts.Vowel += <-vowelChan
-		counts.Sentence += <-sentenceChan
-		counts.Paragraph += <-paragraphChan
-		counts.Digit += <-digitChan
-	}
-
-	return counts
+	return helperFunctions.SumCounts(countChannels, numRoutines)
 }

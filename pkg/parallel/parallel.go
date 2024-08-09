@@ -17,14 +17,7 @@ func ParallelCountAll() (helperFunctions.Counts) {
 
 	var wg sync.WaitGroup
 
-	countChannels := helperFunctions.CountChannels{
-		WordChan:      make(chan int),
-		PunctChan:     make(chan int),
-		VowelChan:     make(chan int),
-		SentenceChan:  make(chan int),
-		ParagraphChan: make(chan int),
-		DigitChan:     make(chan int),
-	}
+	countChannels := helperFunctions.CreateCountChannelsParallel()
 
 	chunkSize := 1000000 
 	chunk := make([]byte, chunkSize)
@@ -51,12 +44,7 @@ func ParallelCountAll() (helperFunctions.Counts) {
 		}
 
 		// Send results through channels
-		countChannels.WordChan <- counts.Word
-		countChannels.PunctChan <- counts.Punct
-		countChannels.VowelChan <- counts.Vowel
-		countChannels.SentenceChan <- counts.Sentence
-		countChannels.ParagraphChan <- counts.Paragraph
-		countChannels.DigitChan <- counts.Digit
+		helperFunctions.SendCounts(counts, countChannels)
 	}
 
 	chunkCount := 0
@@ -81,26 +69,10 @@ func ParallelCountAll() (helperFunctions.Counts) {
 	// Close channels when all goroutines are done
 	go func() {
 		wg.Wait()
-		close(countChannels.WordChan)
-		close(countChannels.PunctChan)
-		close(countChannels.VowelChan)
-		close(countChannels.SentenceChan)
-		close(countChannels.ParagraphChan)
-		close(countChannels.DigitChan)
+		helperFunctions.CloseChannels(countChannels)
 	}()
 
-	// Sum up the results from all goroutines
-	counts := helperFunctions.Counts{}
-
-	for i := 0; i < chunkCount; i++ {
-		counts.Word += <-countChannels.WordChan
-		counts.Punct += <-countChannels.PunctChan
-		counts.Vowel += <-countChannels.VowelChan
-		counts.Sentence += <-countChannels.SentenceChan
-		counts.Paragraph += <-countChannels.ParagraphChan
-		counts.Digit += <-countChannels.DigitChan
-	}
-
-	return counts
+	
+	return helperFunctions.SumCounts(countChannels, chunkCount)
 }
 

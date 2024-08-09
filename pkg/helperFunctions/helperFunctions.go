@@ -73,3 +73,61 @@ func ProcessChar(char byte, inWord *bool, counts *Counts) {
 		counts.Sentence++
 	}
 }
+
+// CreateCountChannels creates the channels for the counts
+func CreateCountChannelsParallel() CountChannels {
+	return CountChannels{
+		WordChan:      make(chan int),
+		PunctChan:     make(chan int),
+		VowelChan:     make(chan int),
+		SentenceChan:  make(chan int),
+		ParagraphChan: make(chan int),
+		DigitChan:     make(chan int),
+	}
+}
+
+// CreateCountChannelsParallelExtended creates the channels for the counts for the parallel extended version
+func CreateCountChannelsParallelExtended(bufferSize int) CountChannels {
+	return CountChannels{
+		WordChan:      make(chan int, bufferSize),
+		PunctChan:     make(chan int, bufferSize),
+		VowelChan:     make(chan int, bufferSize),
+		SentenceChan:  make(chan int, bufferSize),
+		ParagraphChan: make(chan int, bufferSize),
+		DigitChan:     make(chan int, bufferSize),
+	}
+}
+
+// SendCounts sends the counts to the channels
+func SendCounts(counts Counts, channels CountChannels) {
+	channels.WordChan <- counts.Word
+	channels.PunctChan <- counts.Punct
+	channels.VowelChan <- counts.Vowel
+	channels.SentenceChan <- counts.Sentence
+	channels.ParagraphChan <- counts.Paragraph
+	channels.DigitChan <- counts.Digit
+}
+
+// CloseChannels closes the channels
+func CloseChannels(channels CountChannels) {
+	close(channels.WordChan)
+	close(channels.PunctChan)
+	close(channels.VowelChan)
+	close(channels.SentenceChan)
+	close(channels.ParagraphChan)
+	close(channels.DigitChan)
+}
+
+// SumCounts sums the counts from the channels
+func SumCounts(channels CountChannels, numRoutines int) Counts {
+	counts := Counts{}
+	for i := 0; i < numRoutines; i++ {
+		counts.Word += <-channels.WordChan
+		counts.Punct += <-channels.PunctChan
+		counts.Vowel += <-channels.VowelChan
+		counts.Sentence += <-channels.SentenceChan
+		counts.Paragraph += <-channels.ParagraphChan
+		counts.Digit += <-channels.DigitChan
+	}
+	return counts
+}
