@@ -27,9 +27,11 @@ func main() {
 
 	duration := time.Since(start)
 
-	fmt.Printf("Unoptimized Code\nTotal word count: %d\nTotal punctuation count: %d\nTotal vowel count: %d\n" +
-    "Total sentence count: %d\nTotal paragraph count: %d\nTotal digit count: %d\nTotal execution time: %v\n",
-    counts.Word, counts.Punct, counts.Vowel, counts.Sentence, counts.Paragraph, counts.Digit, duration)
+	fmt.Printf(
+		"Unoptimized Code\nTotal word count: %d\nTotal punctuation count: %d\nTotal vowel count: %d\n" +
+        "Total sentence count: %d\nTotal paragraph count: %d\nTotal digit count: %d\nTotal execution time: %v\n",
+        counts.Word, counts.Punct, counts.Vowel, counts.Sentence, counts.Paragraph, counts.Digit, duration
+	)
 
 
 	// Optimized version (single pass)
