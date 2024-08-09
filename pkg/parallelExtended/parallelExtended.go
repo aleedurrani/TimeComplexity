@@ -14,8 +14,6 @@ func ParallelCountAll() (helperFunctions.Counts) {
 
 	file := fileHandling.OpenFile()
 	defer file.Close()
-
-
 	fileSize := fileHandling.GetFileSize(file)
 
 	// Define number of routines
