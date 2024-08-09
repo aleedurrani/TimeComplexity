@@ -23,7 +23,7 @@ func ParallelCountAll() (helperFunctions.Counts) {
 	chunkSize := fileSize / int64(numRoutines)
 
 	var wg sync.WaitGroup
-	countChannels := helperFunctions.CreateCountChannelsParallelExtended(numRoutines)
+	countChannels := helperFunctions.CreateCountChannels(numRoutines)
 
 	// processChunk processes a chunk of the file and sends results through channels
 	processChunk := func(start, end int64) {

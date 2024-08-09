@@ -75,7 +75,17 @@ func ProcessChar(char byte, inWord *bool, counts *Counts) {
 }
 
 // CreateCountChannels creates the channels for the counts
-func CreateCountChannelsParallel() CountChannels {
+func CreateCountChannels(bufferSize int) CountChannels {
+	if bufferSize > 0 {
+		return CountChannels{
+			WordChan:      make(chan int, bufferSize),
+			PunctChan:     make(chan int, bufferSize),
+			VowelChan:     make(chan int, bufferSize),
+			SentenceChan:  make(chan int, bufferSize),
+			ParagraphChan: make(chan int, bufferSize),
+			DigitChan:     make(chan int, bufferSize),
+		}
+	}
 	return CountChannels{
 		WordChan:      make(chan int),
 		PunctChan:     make(chan int),
@@ -83,18 +93,6 @@ func CreateCountChannelsParallel() CountChannels {
 		SentenceChan:  make(chan int),
 		ParagraphChan: make(chan int),
 		DigitChan:     make(chan int),
-	}
-}
-
-// CreateCountChannelsParallelExtended creates the channels for the counts for the parallel extended version
-func CreateCountChannelsParallelExtended(bufferSize int) CountChannels {
-	return CountChannels{
-		WordChan:      make(chan int, bufferSize),
-		PunctChan:     make(chan int, bufferSize),
-		VowelChan:     make(chan int, bufferSize),
-		SentenceChan:  make(chan int, bufferSize),
-		ParagraphChan: make(chan int, bufferSize),
-		DigitChan:     make(chan int, bufferSize),
 	}
 }
 

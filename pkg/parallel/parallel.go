@@ -17,7 +17,7 @@ func ParallelCountAll() (helperFunctions.Counts) {
 
 	var wg sync.WaitGroup
 
-	countChannels := helperFunctions.CreateCountChannelsParallel()
+	countChannels := helperFunctions.CreateCountChannels(0)
 
 	chunkSize := 1000000 
 	chunk := make([]byte, chunkSize)
