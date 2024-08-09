@@ -18,7 +18,7 @@ func ParallelCountAll() (helperFunctions.Counts) {
 	countChannels := helperFunctions.CreateCountChannels(0)
 
 	chunkSize := 1000000 
-	chunk := make([]byte, chunkSize)
+	chunk := make([]byte, 0, chunkSize)
 
 	// processChunk processes a chunk of the file and sends results through channels
 	processChunk := func(chunk []byte, isLastChunk bool) {
@@ -73,4 +73,3 @@ func ParallelCountAll() (helperFunctions.Counts) {
 	
 	return helperFunctions.SumCounts(countChannels, chunkCount)
 }
-
