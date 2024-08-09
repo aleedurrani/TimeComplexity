@@ -7,6 +7,7 @@ import (
 	"github.com/aleedurrani/TimeComplexity/pkg/optimized"
 	"github.com/aleedurrani/TimeComplexity/pkg/parallel"
 	"github.com/aleedurrani/TimeComplexity/pkg/parallelExtended"
+	"github.com/aleedurrani/TimeComplexity/pkg/helperFunctions"
 )
 
 
@@ -15,22 +16,24 @@ func main() {
 	// Unoptimized version
 	start := time.Now()
 
-	wordCount := unoptimized.CountWords()
-	punctCount := unoptimized.CountPunctuation()
-	vowelCount := unoptimized.CountVowels()
-	sentenceCount := unoptimized.CountSentences()
-	paragraphCount := unoptimized.CountParagraphs()
-	digitCount := unoptimized.CountDigits()
+	counts := helperFunctions.Counts{
+		Word:      unoptimized.CountWords(),
+		Punct:     unoptimized.CountPunctuation(),
+		Vowel:     unoptimized.CountVowels(),
+		Sentence:  unoptimized.CountSentences(),
+		Paragraph: unoptimized.CountParagraphs(),
+		Digit:     unoptimized.CountDigits(),
+	}
 
 	duration := time.Since(start)
 
 	fmt.Println("Unoptimized Code")
-	fmt.Printf("Total word count: %d\n", wordCount)
-	fmt.Printf("Total punctuation count: %d\n", punctCount)
-	fmt.Printf("Total vowel count: %d\n", vowelCount)
-	fmt.Printf("Total sentence count: %d\n", sentenceCount)
-	fmt.Printf("Total paragraph count: %d\n", paragraphCount)
-	fmt.Printf("Total digit count: %d\n", digitCount)
+	fmt.Printf("Total word count: %d\n", counts.Word)
+	fmt.Printf("Total punctuation count: %d\n", counts.Punct)
+	fmt.Printf("Total vowel count: %d\n", counts.Vowel)
+	fmt.Printf("Total sentence count: %d\n", counts.Sentence)
+	fmt.Printf("Total paragraph count: %d\n", counts.Paragraph)
+	fmt.Printf("Total digit count: %d\n", counts.Digit)
 	fmt.Printf("Total execution time: %v\n", duration)
 
 	// Optimized version (single pass)
