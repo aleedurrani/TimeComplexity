@@ -3,8 +3,8 @@ package unoptimized
 import (
 	
 	"unicode"
-	"github.com/aleedurrani/TimeComplexity/pkg/fileHandling"
-	"github.com/aleedurrani/TimeComplexity/pkg/helperFunctions"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/fileHandling"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
 )
 
 // These functions read the file multiple times, once for each counting operation

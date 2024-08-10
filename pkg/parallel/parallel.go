@@ -2,10 +2,11 @@ package parallel
 
 import (
 	"sync"
-	"github.com/aleedurrani/TimeComplexity/pkg/helperFunctions"
-	"github.com/aleedurrani/TimeComplexity/pkg/fileHandling"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/fileHandling"
 )
 
+// This function uses goroutines to process the file in parallel
 // ParallelCountAll counts words, punctuation, vowels, sentences, paragraphs, and digits using goroutines
 func ParallelCountAll() (helperFunctions.Counts) {
 
@@ -15,12 +16,12 @@ func ParallelCountAll() (helperFunctions.Counts) {
 
 	var wg sync.WaitGroup
 
-	countChannels := helperFunctions.CreateCountChannels(0)
+	countChannel := make(chan helperFunctions.Counts)
 
 	chunkSize := 1000000 
-	chunk := make([]byte, 0, chunkSize)
+	chunk := make([]byte, chunkSize)
 
-	// processChunk processes a chunk of the file and sends results through channels
+	// processChunk processes a chunk of the file and sends results through the channel
 	processChunk := func(chunk []byte, isLastChunk bool) {
 		defer wg.Done()
 		counts := helperFunctions.Counts{}
@@ -41,8 +42,8 @@ func ParallelCountAll() (helperFunctions.Counts) {
 			counts.Paragraph++
 		}
 
-		// Send results through channels
-		helperFunctions.SendCounts(counts, countChannels)
+		// Send results through the channel
+		countChannel <- counts
 	}
 
 	chunkCount := 0
@@ -52,7 +53,7 @@ func ParallelCountAll() (helperFunctions.Counts) {
 		if len(chunk) == chunkSize {
 			wg.Add(1)
 			go processChunk(chunk, false)
-			chunk = make([]byte, 0, chunkSize)
+			chunk = make([]byte, chunkSize)
 			chunkCount++
 		}
 	}
@@ -64,12 +65,15 @@ func ParallelCountAll() (helperFunctions.Counts) {
 		chunkCount++
 	}
 
-	// Close channels when all goroutines are done
+	// Close channel when all goroutines are done
 	go func() {
 		wg.Wait()
-		helperFunctions.CloseChannels(countChannels)
+		close(countChannel)
 	}()
 
-	
-	return helperFunctions.SumCounts(countChannels, chunkCount)
+	// Sum up the results from all goroutines
+	totalCounts := helperFunctions.SumCounts(countChannel)
+
+	return totalCounts
 }
+

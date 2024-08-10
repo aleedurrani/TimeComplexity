@@ -1,8 +1,8 @@
 package optimized
 
 import (
-	"github.com/aleedurrani/TimeComplexity/pkg/helperFunctions"
-	"github.com/aleedurrani/TimeComplexity/pkg/fileHandling"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/fileHandling"
 )
 
 

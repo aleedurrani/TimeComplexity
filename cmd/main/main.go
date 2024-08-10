@@ -7,7 +7,7 @@ import (
 	"github.com/aleedurrani/TimeComplexity/pkg/optimized"
 	"github.com/aleedurrani/TimeComplexity/pkg/parallel"
 	"github.com/aleedurrani/TimeComplexity/pkg/parallelExtended"
-	"github.com/aleedurrani/TimeComplexity/pkg/helperFunctions"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
 )
 
 

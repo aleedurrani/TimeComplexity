@@ -3,16 +3,17 @@ package parallelExtended
 import (
 	"log"
 	"sync"
-	"github.com/aleedurrani/TimeComplexity/pkg/helperFunctions"
-	"github.com/aleedurrani/TimeComplexity/pkg/fileHandling"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
+	"github.com/aleedurrani/TimeComplexity/pkg/utils/fileHandling"
 )
 
 
 // This function uses goroutines to process the file in parallel with chunking based on defined number of go routines
-func ParallelCountAll() (helperFunctions.Counts) {
-
+// The number of go routines is defined by the user
+func ParallelCountAll() helperFunctions.Counts {
 	file := fileHandling.OpenFile()
 	defer file.Close()
+
 	fileSize := fileHandling.GetFileSize(file)
 
 	// Define number of routines
@@ -20,9 +21,9 @@ func ParallelCountAll() (helperFunctions.Counts) {
 	chunkSize := fileSize / int64(numRoutines)
 
 	var wg sync.WaitGroup
-	countChannels := helperFunctions.CreateCountChannels(numRoutines)
+	countsChan := make(chan helperFunctions.Counts, numRoutines)
 
-	// processChunk processes a chunk of the file and sends results through channels
+	// processChunk processes a chunk of the file and sends results through the channel
 	processChunk := func(start, end int64) {
 		defer wg.Done()
 		counts := helperFunctions.Counts{}
@@ -50,8 +51,8 @@ func ParallelCountAll() (helperFunctions.Counts) {
 			counts.Paragraph++
 		}
 
-		// Send results through channels
-		helperFunctions.SendCounts(counts, countChannels)
+		// Send results through the channel
+		countsChan <- counts
 	}
 
 	// Start goroutines
@@ -65,12 +66,14 @@ func ParallelCountAll() (helperFunctions.Counts) {
 		go processChunk(start, end)
 	}
 
-	// Close channels when all goroutines are done
+	// Close channel when all goroutines are done
 	go func() {
 		wg.Wait()
-		helperFunctions.CloseChannels(countChannels)
+		close(countsChan)
 	}()
 
+	// Sum up the results from all goroutines
+	totalCounts := helperFunctions.SumCounts(countsChan)
 
-	return helperFunctions.SumCounts(countChannels, numRoutines)
+	return totalCounts
 }
