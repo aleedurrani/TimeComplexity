@@ -1,9 +1,10 @@
 # Time Complexity Analysis: Text File Processing in GoLang
 
+
 ## Unoptimized Code (Reading the file multiple times using different functions)
 
 ### Overview
-This Go program processes a text file (`file.txt`) and performs various counting operations. It calculates the number of words, punctuation marks, vowels, sentences, paragraphs, and digits in the file. The program is structured with separate functions for each counting operation.
+This Go program processes a text file and performs various counting operations. It calculates the number of words, punctuation marks, vowels, sentences, paragraphs, and digits in the file. The program is structured with separate functions for each counting operation.
 
 ### Code Structure
 - The main functionality is divided into several functions:
@@ -17,7 +18,7 @@ This Go program processes a text file (`file.txt`) and performs various counting
   - `isPunctuation()`
   - `isVowel()`
   - `isSentence()`
-- The `main()` function orchestrates the execution of all counting operations and measures the total execution time.
+- The `unoptimizedHandler()` function orchestrates the execution of all counting operations and measures the total execution time.
 
 ### Performance Analysis
 Based on the output provided:
@@ -40,7 +41,7 @@ The optimized version of the program uses a single function `optimizedCountAll()
 ### Code Structure
 - A single function `optimizedCountAll()` replaces the multiple counting functions from the unoptimized version.
 - This function reads the file character by character and updates all counters in a single pass.
-- The `main()` function now calls this optimized function and measures its execution time.
+- The `optimizedHandler()` function now calls this optimized function and measures its execution time.
 
 ### Performance Analysis
 Based on the output provided:
@@ -64,13 +65,13 @@ Based on the output provided:
 This version further optimizes the code by using goroutines to process chunks of the file in parallel.
 
 ### Code Structure
-- The `parallelCountAll()` function divides the file into chunks and processes them concurrently using goroutines.
-- It uses channels to collect results from each goroutine and combines them for the final count.
+- The `parallelCountAll()` function processes the file using a similar approach to the optimized version, but with minimal parallelization.
+- It may use a small number of goroutines or a simplified concurrent approach that doesn't fully utilize parallel processing.
 
 ### Performance Analysis
 Based on the output provided:
 
-1. **Execution Time**: The parallel version completed all operations in approximately 1.5 seconds.
+1. **Execution Time**: The parallel version completed all operations in approximately 3.3 seconds.
 
 2. **File Statistics**:
    - Words: 14,766,930
@@ -80,9 +81,9 @@ Based on the output provided:
    - Paragraphs: 164,077
    - Digits: 1,968,924
 
-3. **Performance Improvement**:
-   - The parallel version achieved a 54-56% improvement in execution time compared to the optimized (single-pass) version.
-   - Compared to the original unoptimized version, the total improvement is approximately 76-77%.
+3. **Performance Comparison**:
+   - The parallel version achieved similar performance to the optimized (single-pass) version, with only a marginal improvement of about 2-3%.
+   - Compared to the original unoptimized version, the total improvement is approximately 49-50%.
 
 ## Parallel Extended Optimization
 
@@ -134,3 +135,68 @@ These optimizations showcase:
 - The critical role of finding the right balance in parallelism, as excessive goroutines can lead to diminishing returns and even performance degradation.
 
 The parallel extended version demonstrates that while parallelism can significantly improve performance, there's an optimal point beyond which adding more goroutines becomes counterproductive due to increased overhead in goroutine management and synchronization.
+
+## How to Run
+
+To run this project using Docker, follow these steps:
+
+1. Build the Docker image:
+   ```
+   docker build -t time-complexity-api .
+   ```
+
+2. Run the Docker container:
+   ```
+   docker run -p 8080:8080 time-complexity-api
+   ```
+
+This will start the API server on port 8080 of your local machine.
+
+
+## API Endpoints
+
+The project provides several API endpoints to analyze text files using different processing methods:
+
+1. **Analyze (All Stats)**
+   - Endpoint: `/analyze`
+   - Method: POST
+   - Query Parameter: `routines` (optional, for parallelExtended version)
+   - Description: This endpoint processes the uploaded file using all available methods (unoptimized, optimized, parallel, and parallel extended) and returns the results for each. For the parallelExtended version, you can specify the number of goroutines using the `routines` query parameter (default is 8).
+   - Response: JSON object containing counts and execution times for all methods.
+   - Example: `/analyze?routines=8` (uses 8 goroutines for parallelExtended)
+
+2. **Unoptimized**
+   - Endpoint: `/unoptimized`
+   - Method: POST
+   - Description: Processes the file using the unoptimized method, reading the file multiple times.
+   - Response: JSON object with counts and execution time.
+
+3. **Optimized**
+   - Endpoint: `/optimized`
+   - Method: POST
+   - Description: Analyzes the file using the optimized single-pass method.
+   - Response: JSON object with counts and execution time.
+
+4. **Parallel**
+   - Endpoint: `/parallel`
+   - Method: POST
+   - Description: Processes the file using simple parallel processing.
+   - Response: JSON object with counts and execution time.
+
+5. **Parallel Extended**
+   - Endpoint: `/parallelExtended`
+   - Method: POST
+   - Query Parameter: `routines` (optional, default is 8)
+   - Description: Analyzes the file using the extended parallel processing method with a customizable number of goroutines.
+   - Response: JSON object with counts and execution time.
+   - Example: `/parallelExtended?routines=16` (uses 16 goroutines for processing)
+
+To use these endpoints:
+1. Ensure the API server is running (follow the "How to Run" instructions above).
+2. Use a tool like cURL or Postman to send POST requests to `http://localhost:8080/{endpoint}`.
+3. Include the text file (file in the assets folder can be used) you want to analyze in the request body (type form-data) (with the key `file`).
+
+
+
+
+

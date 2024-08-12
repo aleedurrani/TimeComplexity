@@ -10,7 +10,6 @@ import (
 func OptimizedCountAll() (helperFunctions.Counts) {
 
 	file := fileHandling.OpenFile()
-	defer file.Close()
 	scanner := fileHandling.CreateRuneScanner(file)
 
 	counts := helperFunctions.Counts{}

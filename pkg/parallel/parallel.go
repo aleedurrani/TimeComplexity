@@ -11,7 +11,6 @@ import (
 func ParallelCountAll() (helperFunctions.Counts) {
 
 	file := fileHandling.OpenFile()
-	defer file.Close()
 	scanner := fileHandling.CreateRuneScanner(file)
 
 	var wg sync.WaitGroup

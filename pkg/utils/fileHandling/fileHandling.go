@@ -1,39 +1,45 @@
 package fileHandling
 
 import (
-	"log"
-	"os"
 	"bufio"
+	"bytes"
 	"io"
+	"sync"
 )
 
-// OpenFile opens the file and returns a pointer to the file
-func OpenFile() *os.File {
-    file, err := os.Open("../../assets/file.txt")
-    if err != nil {
-        log.Fatal(err)
-    }
-    return file
+var (
+	uploadedFile []byte
+	fileMutex    sync.RWMutex
+)
+
+// SetUploadedFile sets the uploaded file content
+func SetUploadedFile(content []byte) {
+	fileMutex.Lock()
+	defer fileMutex.Unlock()
+	uploadedFile = content
+}
+
+// OpenFile returns a bytes.Reader for the uploaded file
+func OpenFile() *bytes.Reader {
+	fileMutex.RLock()
+	defer fileMutex.RUnlock()
+	return bytes.NewReader(uploadedFile)
 }
 
 // CreateRuneScanner creates a rune scanner for the file
-func CreateRuneScanner(file *os.File) *bufio.Scanner {
-    scanner := bufio.NewScanner(file)
-    scanner.Split(bufio.ScanRunes)
-    return scanner
+func CreateRuneScanner(file *bytes.Reader) *bufio.Scanner {
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanRunes)
+	return scanner
 }
 
-// getFileSize returns the size of the given file
-func GetFileSize(file *os.File) int64 {
-	fileInfo, err := file.Stat()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return fileInfo.Size()
+// GetFileSize returns the size of the uploaded file
+func GetFileSize(file *bytes.Reader) int64 {
+	return int64(file.Len())
 }
 
 // ReadChunk reads a chunk of the file from the given start position
-func ReadChunk(file *os.File, chunk []byte, start int64) error {
+func ReadChunk(file *bytes.Reader, chunk []byte, start int64) error {
 	_, err := file.ReadAt(chunk, start)
 	if err != nil && err != io.EOF {
 		return err

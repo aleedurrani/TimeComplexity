@@ -13,7 +13,6 @@ import (
 func CountWords() int {
 
     file := fileHandling.OpenFile()
-    defer file.Close()
     scanner := fileHandling.CreateRuneScanner(file)
 
     wordCount := 0
@@ -44,7 +43,6 @@ func CountWords() int {
 func CountPunctuation() int {
 
     file := fileHandling.OpenFile()
-    defer file.Close()
     scanner := fileHandling.CreateRuneScanner(file)
     
     punctCount := 0
@@ -62,7 +60,6 @@ func CountPunctuation() int {
 func CountVowels() int {
 
 	file := fileHandling.OpenFile()
-    defer file.Close()
     scanner := fileHandling.CreateRuneScanner(file)
     
     vowelCount := 0
@@ -80,7 +77,6 @@ func CountVowels() int {
 func CountSentences() int {
 	
     file := fileHandling.OpenFile()
-    defer file.Close()
     scanner := fileHandling.CreateRuneScanner(file)
 
     sentenceCount := 0
@@ -107,7 +103,6 @@ func CountSentences() int {
 func CountParagraphs() int {
 	
     file := fileHandling.OpenFile()
-    defer file.Close()
     scanner := fileHandling.CreateRuneScanner(file)
 
     paragraphCount := 0
@@ -125,7 +120,6 @@ func CountParagraphs() int {
 func CountDigits() int {
 	
     file := fileHandling.OpenFile()
-    defer file.Close()
     scanner := fileHandling.CreateRuneScanner(file)
 
     digitCount := 0

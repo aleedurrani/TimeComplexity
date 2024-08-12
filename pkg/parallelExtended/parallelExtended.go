@@ -10,14 +10,11 @@ import (
 
 // This function uses goroutines to process the file in parallel with chunking based on defined number of go routines
 // The number of go routines is defined by the user
-func ParallelCountAll() helperFunctions.Counts {
+func ParallelCountAll(numRoutines int) helperFunctions.Counts {
 	file := fileHandling.OpenFile()
-	defer file.Close()
 
 	fileSize := fileHandling.GetFileSize(file)
 
-	// Define number of routines
-	numRoutines := 8
 	chunkSize := fileSize / int64(numRoutines)
 
 	var wg sync.WaitGroup
