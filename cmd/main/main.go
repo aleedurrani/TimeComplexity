@@ -8,6 +8,7 @@ import (
 	"github.com/aleedurrani/TimeComplexity/internal/handlers/routes"
 )
 
+// main function
 func main() {
 	http.HandleFunc("/analyze", routes.AnalyzeHandler)
 	http.HandleFunc("/unoptimized", routes.UnoptimizedHandler)
