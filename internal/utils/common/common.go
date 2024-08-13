@@ -1,7 +1,6 @@
-package commonFunctions
+package common
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -13,29 +12,8 @@ import (
 	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
 )
 
-func HandleSingleMethod(w http.ResponseWriter, r *http.Request, countFunc func() helperFunctions.Counts) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
 
-	_, err := GetFileContent(r)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	counts, duration := RunMethod(countFunc)
-
-	response := map[string]interface{}{
-		"counts":   counts,
-		"duration": duration.String(),
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
+// RunMethod runs the method and returns the counts and duration
 func RunMethod(countFunc func() helperFunctions.Counts) (helperFunctions.Counts, time.Duration) {
 	start := time.Now()
 	counts := countFunc()
@@ -43,6 +21,7 @@ func RunMethod(countFunc func() helperFunctions.Counts) (helperFunctions.Counts,
 	return counts, duration
 }
 
+// GetFileContent gets the file content from the request
 func GetFileContent(r *http.Request) ([]byte, error) {
 	file, err := ParseAndGetFile(r)
 	if err != nil {
@@ -59,6 +38,7 @@ func GetFileContent(r *http.Request) ([]byte, error) {
 	return content, nil
 }
 
+// ParseAndGetFile parses the request and gets the file
 func ParseAndGetFile(r *http.Request) (multipart.File, error) {
 	err := r.ParseMultipartForm(10 << 20) // 10 MB limit on In-Memory Parsing
 	if err != nil {
@@ -73,6 +53,7 @@ func ParseAndGetFile(r *http.Request) (multipart.File, error) {
 	return file, nil
 }
 
+// GetNumRoutines gets the number of routines from the request
 func GetNumRoutines(w http.ResponseWriter, r *http.Request) int {
 	routines := r.URL.Query().Get("routines")
 	numRoutines := 8

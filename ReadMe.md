@@ -142,12 +142,12 @@ To run this project using Docker, follow these steps:
 
 1. Build the Docker image:
    ```
-   docker build -t time-complexity-api .
+   docker compose build
    ```
 
 2. Run the Docker container:
    ```
-   docker run -p 8080:8080 time-complexity-api
+   docker compose up
    ```
 
 This will start the API server on port 8080 of your local machine.
@@ -159,36 +159,46 @@ The project provides several API endpoints to analyze text files using different
 
 1. **Analyze (All Stats)**
    - Endpoint: `/analyze`
-   - Method: POST
+   - Methods: POST, GET
    - Query Parameter: `routines` (optional, for parallelExtended version)
-   - Description: This endpoint processes the uploaded file using all available methods (unoptimized, optimized, parallel, and parallel extended) and returns the results for each. For the parallelExtended version, you can specify the number of goroutines using the `routines` query parameter (default is 8).
-   - Response: JSON object containing counts and execution times for all methods.
+   - POST Description: This endpoint processes the uploaded file using all available methods (unoptimized, optimized, parallel, and parallel extended) and returns the results for each. For the parallelExtended version, you can specify the number of goroutines using the `routines` query parameter (default is 8). The results are stored in the PostgreSQL database.
+   - GET Description: Retrieves all stored analysis results from the database.
+   - POST Response: JSON object containing counts and execution times for all methods.
+   - GET Response: JSON array of all stored analysis results.
    - Example: `/analyze?routines=8` (uses 8 goroutines for parallelExtended)
 
 2. **Unoptimized**
    - Endpoint: `/unoptimized`
-   - Method: POST
-   - Description: Processes the file using the unoptimized method, reading the file multiple times.
-   - Response: JSON object with counts and execution time.
+   - Methods: POST, GET
+   - POST Description: Processes the file using the unoptimized method, reading the file multiple times. Stores the results in the database.
+   - GET Description: Retrieves all stored unoptimized analysis results from the database.
+   - POST Response: JSON object with counts and execution time.
+   - GET Response: JSON array of all stored unoptimized analysis results.
 
 3. **Optimized**
    - Endpoint: `/optimized`
-   - Method: POST
-   - Description: Analyzes the file using the optimized single-pass method.
-   - Response: JSON object with counts and execution time.
+   - Methods: POST, GET
+   - POST Description: Analyzes the file using the optimized single-pass method. Stores the results in the database.
+   - GET Description: Retrieves all stored optimized analysis results from the database.
+   - POST Response: JSON object with counts and execution time.
+   - GET Response: JSON array of all stored optimized analysis results.
 
 4. **Parallel**
    - Endpoint: `/parallel`
-   - Method: POST
-   - Description: Processes the file using simple parallel processing.
-   - Response: JSON object with counts and execution time.
+   - Methods: POST, GET
+   - POST Description: Processes the file using simple parallel processing. Stores the results in the database.
+   - GET Description: Retrieves all stored parallel analysis results from the database.
+   - POST Response: JSON object with counts and execution time.
+   - GET Response: JSON array of all stored parallel analysis results.
 
 5. **Parallel Extended**
    - Endpoint: `/parallelExtended`
-   - Method: POST
+   - Methods: POST, GET
    - Query Parameter: `routines` (optional, default is 8)
-   - Description: Analyzes the file using the extended parallel processing method with a customizable number of goroutines.
-   - Response: JSON object with counts and execution time.
+   - POST Description: Analyzes the file using the extended parallel processing method with a customizable number of goroutines. Stores the results in the database.
+   - GET Description: Retrieves all stored parallel extended analysis results from the database.
+   - POST Response: JSON object with counts and execution time.
+   - GET Response: JSON array of all stored parallel extended analysis results.
    - Example: `/parallelExtended?routines=16` (uses 16 goroutines for processing)
 
 To use these endpoints:
