@@ -7,6 +7,7 @@ import (
 
 	"github.com/aleedurrani/TimeComplexity/internal/utils/common"
 	"github.com/aleedurrani/TimeComplexity/pkg/parallel"
+	"github.com/aleedurrani/TimeComplexity/internal/dbConnection"
 )
 
 // ParallelHandler handles the parallel endpoint
@@ -28,7 +29,7 @@ func ParallelHandler(w http.ResponseWriter, r *http.Request) {
 			"duration": duration.String(),
 		}
 
-		err = StoreResponse("parallel", response)
+		err = dbConnection.StoreResponse("parallel", response)
 		if err != nil {
 			log.Printf("Error storing response: %v", err)
 			http.Error(w, "Error storing response", http.StatusInternalServerError)
@@ -39,7 +40,7 @@ func ParallelHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 
 	case http.MethodGet:
-		records, err := RetrieveRecords("parallel")
+		records, err := dbConnection.RetrieveRecords("parallel")
 		if err != nil {
 			if err.Error() == "no records found" {
 				http.Error(w, "No records found", http.StatusNotFound)

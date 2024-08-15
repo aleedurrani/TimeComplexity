@@ -11,6 +11,7 @@ import (
 	"github.com/aleedurrani/TimeComplexity/pkg/parallelExtended"
 	"github.com/aleedurrani/TimeComplexity/pkg/unoptimized"
 	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
+	"github.com/aleedurrani/TimeComplexity/internal/dbConnection"
 	_ "github.com/lib/pq"
 )
 
@@ -86,7 +87,7 @@ func handlePostRequest(w http.ResponseWriter, r *http.Request) {
 		"duration": parallelExtendedDuration.String(),
 	}
 
-	err = StoreResponse("all",response)
+	err = dbConnection.StoreResponse("all",response)
 	if err != nil {
 		log.Printf("Error storing response: %v", err)
 		http.Error(w, "Error storing response", http.StatusInternalServerError)
@@ -101,7 +102,7 @@ func handlePostRequest(w http.ResponseWriter, r *http.Request) {
 
 // handleGetRequest handles the GET request for retrieving the analysis results
 func handleGetRequest(w http.ResponseWriter) {
-	records, err := RetrieveRecords("all")
+	records, err := dbConnection.RetrieveRecords("all")
 	if err != nil {
 		if err.Error() == "no records found" {
 			http.Error(w, "No records found", http.StatusNotFound)

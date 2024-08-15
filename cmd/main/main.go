@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/aleedurrani/TimeComplexity/internal/handlers/routes"
+	"github.com/aleedurrani/TimeComplexity/internal/dbConnection"
 )
 
 // main function
@@ -14,7 +15,7 @@ func main() {
 	// Retry for database initialization
 	maxRetries := 5
 	for i := 0; i < maxRetries; i++ {
-		err := routes.InitDB()
+		err := dbConnection.InitDB()
 		if err == nil {
 			break
 		}
@@ -24,7 +25,7 @@ func main() {
 		log.Printf("Failed to initialize database. Retrying in %d seconds...", i+1)
 		time.Sleep(time.Duration(i+1) * time.Second)
 	}
-	defer routes.CloseDB()
+	defer dbConnection.CloseDB()
 	
 	http.HandleFunc("/analyze", routes.AnalyzeHandler)
 	http.HandleFunc("/unoptimized", routes.UnoptimizedHandler)

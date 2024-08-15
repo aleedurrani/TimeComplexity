@@ -8,6 +8,8 @@ import (
 	"github.com/aleedurrani/TimeComplexity/internal/utils/common"
 	"github.com/aleedurrani/TimeComplexity/pkg/unoptimized"
 	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
+	"github.com/aleedurrani/TimeComplexity/internal/dbConnection"
+	
 )
 
 // UnoptimizedHandler handles the unoptimized endpoint
@@ -37,7 +39,7 @@ func UnoptimizedHandler(w http.ResponseWriter, r *http.Request) {
 			"duration": duration.String(),
 		}
 
-		err = StoreResponse("unoptimized", response)
+		err = dbConnection.StoreResponse("unoptimized", response)
 		if err != nil {
 			log.Printf("Error storing response: %v", err)
 			http.Error(w, "Error storing response", http.StatusInternalServerError)
@@ -48,7 +50,7 @@ func UnoptimizedHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 
 	} else if r.Method == http.MethodGet {
-		records, err := RetrieveRecords("unoptimized")
+		records, err := dbConnection.RetrieveRecords("unoptimized")
 		if err != nil {
 			if err.Error() == "no records found" {
 				http.Error(w, "No records found", http.StatusNotFound)

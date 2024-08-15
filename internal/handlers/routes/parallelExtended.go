@@ -8,6 +8,7 @@ import (
 	"github.com/aleedurrani/TimeComplexity/internal/utils/common"
 	"github.com/aleedurrani/TimeComplexity/pkg/parallelExtended"
 	"github.com/aleedurrani/TimeComplexity/pkg/utils/helperFunctions"
+	"github.com/aleedurrani/TimeComplexity/internal/dbConnection"
 )
 
 // ParallelExtendedHandler handles the parallelExtended endpoint
@@ -36,7 +37,7 @@ func ParallelExtendedHandler(w http.ResponseWriter, r *http.Request) {
 			"duration": duration.String(),
 		}
 
-		err = StoreResponse("parallelExtended", response)
+		err = dbConnection.StoreResponse("parallelExtended", response)
 		if err != nil {
 			log.Printf("Error storing response: %v", err)
 			http.Error(w, "Error storing response", http.StatusInternalServerError)
@@ -47,7 +48,7 @@ func ParallelExtendedHandler(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(response)
 
 	case http.MethodGet:
-		records, err := RetrieveRecords("parallelExtended")
+		records, err := dbConnection.RetrieveRecords("parallelExtended")
 		if err != nil {
 			if err.Error() == "no records found" {
 				http.Error(w, "No records found", http.StatusNotFound)
